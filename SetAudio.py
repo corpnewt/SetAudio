@@ -5,10 +5,21 @@ class App:
     def __init__(self):
         self.r = run.Run()
         self.u = utils.Utils("Set Audio")
-        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"Scripts","SetAudio.txt")
+        script_name = self._get_script()
+        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"Scripts",script_name)
         self.a = applescript.Applescript()
         self.ins = None
         self.outs = None
+
+    def _get_script(self):
+        # Check if we're on macOS 13 or newer
+        try:
+            sw_vers = int(self.r.run({"args":["sw_vers","-productVersion"]})[0].strip().split(".")[0])
+            if sw_vers >= 13:
+                return "SetAudio13.txt"
+        except:
+            pass
+        return "SetAudio.txt"
 
     def get_inputs_outputs(self):
         # Runs system_profiler SPAudioDataType and parses data
